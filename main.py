@@ -2,16 +2,16 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")                                                    
+@app.get("/home")
 def home():
-    return {'message' : "This is home route"}
+    return {
+        'message':'You are at home now !'
+    }
 
+# Path Parameter means Dynamic Routes.
 
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
-
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
-
+@app.get("/home/{user_id}")
+def userid(user_id:int):                                   # This is Data Validation
+    return {
+        'message':user_id
+    }
