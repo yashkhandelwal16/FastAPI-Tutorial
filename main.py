@@ -1,16 +1,54 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Header,Depends
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
+# Normal Usecase of Depends
+#-----------------------------------------------------------------------------
+def common_logic():
+    return {
+        "message":"Commom Logic Executed"
+    }
+
+@app.get("/home")
+def home(data = Depends(common_logic)):
+    return data
+#-----------------------------------------------------------------------------
 
 
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
+# Resuable Logic of using Depends
+#----------------------------------------------------------------------------
+def get_current_user():
+    return {
+        "user":"Yash"
+    }
 
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
+@app.get("/profile")
+def profile(user = Depends(get_current_user)):
+    return user
+
+@app.get("/dashboard")
+def dashboard(user = Depends(get_current_user)):
+    return user
+# ---------------------------------------------------------------------------
+
+
+# Real Authentication Example [Important]
+#----------------------------------------------------------------------------
+def verify_token(token:str = Header(None)):
+    if token != "secrettoken":
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized"
+        )
+    return {
+        "user":"Authorized User"
+    }
+
+@app.get("/secure_data")
+def secure_data(user = Depends(verify_token)):
+    return {
+        "message":"Secure Data Accessed",
+        "user":user
+    }
+# ---------------------------------------------------------------------------
+
