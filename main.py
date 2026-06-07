@@ -1,16 +1,23 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
+
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
+class Address(BaseModel):
+    city:str
+    pincode:int
+    country:str
+
+class userdetails(BaseModel):
+    name:str
+    age:int
+    address:Address
 
 
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
-
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
+@app.post("/createuser")
+def createdata(data:userdetails):
+    return {
+        'message':'Data Created',
+        'Data':data
+    }
