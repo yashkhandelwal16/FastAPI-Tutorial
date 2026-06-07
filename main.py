@@ -1,16 +1,39 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status, HTTPException
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
+
+# Using the built in status_code, we have to write it during writing the url.
+@app.post("/create", status_code=status.HTTP_201_CREATED)
+def create_user():
+    return {
+        "message":"User Created"
+    }
+
+# Using the custom status.
+@app.get("/user")
+def get_user():
+    return {
+        "status":"Success",            # Even if the user don't know the mean of code , it will understand.
+        "message":"User Fetched",
+        "data":{
+            "name":"Yash",
+            "age" : 33
+        }
+    }
+
+# Raise Custom Error using the HTTPException Built-in
+@app.get("/users/{user_id}")
+def get_users(user_id:int):
+    if user_id != 1:
+        raise HTTPException(
+            status_code=404,
+            detail="User Not Found"
+        )
+    return {
+        "id":1,
+        "name":"Yash",
+        "age":29
+    }
 
 
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
-
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
