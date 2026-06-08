@@ -1,16 +1,21 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+import time
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
+# Common Middleware code
+@app.middleware("http")
+async def middle_ware(requests:Request,call_next):
+    print("Request Recieved")
+    response = await call_next(requests)
+    print("Response Sent")
+    return response
 
-
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
-
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
+# Real world example of Logging middleware
+@app.middleware("http")
+async def logging_middleware(requests:Request,call_next):
+    Start_time = time.time()
+    response = await call_next(requests)
+    process_time = time.time()-Start_time
+    print(f"Path:{requests.url.path}  |  Time:{process_time}")
+    return response
