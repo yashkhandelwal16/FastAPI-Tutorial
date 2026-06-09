@@ -19,18 +19,18 @@ engine = create_engine(
 # Create a temporary Session for database
 sessionLocal = sessionmaker(bind=engine)
 
-# This is the parent class for all database tables.
+# This is the parent class/base for all database tables.
 Base = declarative_base()
 
-# Base Datatype define using class
-class Todod(Base):
+# define table
+class Todo(Base):
     __tablename__ = "todos"
 
     id = Column(Integer,primary_key=True, index=True)
     title = Column(String)
     completed = Column(BOOLEAN)
 
-# Creating the database table
+# Creating the table
 Base.metadata.create_all(bind=engine)
 
 # Declare a function
