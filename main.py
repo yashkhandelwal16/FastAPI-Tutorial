@@ -1,16 +1,24 @@
+import time
+import asyncio
 from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
 
+# Normal function 
+def task():
+    time.sleep(3)
+    return "Done"
 
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
+# async-await function
+async def task():
+    await asyncio.sleep(3)
+    return "Done"
 
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
+# asyncio use in route
+@app.get("/")
+async def home():
+    await asyncio.sleep(3)
+    return {
+        "message":"Async API"
+    }
