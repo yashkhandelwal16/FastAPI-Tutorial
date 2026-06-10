@@ -1,16 +1,25 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
+# Allowed Origins(Frontend URL)
+Origins = [
+    "http://localhost:5173"
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = Origins,          # Allowed Front end
+    allow_credentials = True,
+    allow_method = ["*"],             # Get,Put,Post,Delete
+    allow_headers = ["*"]
+    )
 
-@app.get("/users")                                               
+# Get API 
+@app.get("/")
 def home():
-    return {'message' : "This is users route"}
+    return {
+        "message":"CORS ENABLE API"
+    }
 
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
