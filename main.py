@@ -1,16 +1,18 @@
 from fastapi import FastAPI
+import requests
+from bs4 import BeautifulSoup
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
-
-
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
-
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
+@app.get("/news")
+def get_news():
+    url = "https://indianexpress.com/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text,"html.parser")
+    title = []
+    for item in soup.find_all("a",class_="topblockNews__sidebarLink"):
+        title.append(item.text)
+    
+    return {
+        "News":title[:2]
+    }
