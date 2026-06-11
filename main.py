@@ -1,16 +1,29 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-@app.get("/")                                                    
-def home():
-    return {'message' : "This is home route"}
+# Limiter SETUP
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
 
+# Error Handle
+@app.exception_handler(RateLimitExceeded)
+def rate_limit_handler(request:Request,exc:RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={
+            "Detail":"Too Many Requests"
+        }
+    )
 
-@app.get("/users")                                               
-def home():
-    return {'message' : "This is users route"}
-
-@app.get("/api/fetch")                                           
-def home():
-    return {'message' : "Here /api/fetch is an API Endpoints whereas /fetch is route"}
+# Rate Limiter API
+@app.get("/data")
+@limiter.limit("5/minute")
+def get_data(request:Request):
+    return {
+        "message":"Success"
+    }
